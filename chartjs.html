@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chart.js</title>
+
+    <style>
+      body {
+        width: 100%;
+      }
+      h1 {
+        text-align: center;
+      }
+      .chart1,
+      .chart2,
+      .chart3 {
+        margin: 0 auto;
+        width: 500px;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chart.js Example</h1>
+    <div class="chart1">
+      <canvas id="myChart1"></canvas>
+    </div>
+    <div class="chart2">
+      <canvas id="myChart2"></canvas>
+    </div>
+    <div class="chart3">
+      <canvas id="myChart3"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      let delayed;
+      const ctx = document.getElementById("myChart1");
+      const ctx2 = document.getElementById("myChart2");
+      const ctx3 = document.getElementById("myChart3");
+      const data = {
+        labels: [
+          "Eating",
+          "Drinking",
+          "Sleeping",
+          "Designing",
+          "Coding",
+          "Cycling",
+          "Running",
+        ],
+        datasets: [
+          {
+            label: "My First Dataset",
+            data: [65, 59, 90, 81, 56, 55, 40],
+            fill: true,
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "rgb(255, 99, 132)",
+            pointBackgroundColor: "rgb(255, 99, 132)",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgb(255, 99, 132)",
+          },
+          {
+            label: "My Second Dataset",
+            data: [28, 48, 40, 19, 96, 27, 100],
+            fill: true,
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgb(54, 162, 235)",
+            pointBackgroundColor: "rgb(54, 162, 235)",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgb(54, 162, 235)",
+          },
+        ],
+      };
+      const data2 = {
+        labels: ["Mon", "Tue", "Wen", "Tur", "Fri", "Sat", "Sun"],
+        datasets: [
+          {
+            label: "My First Dataset",
+            data: [65, 59, 80, 81, 56, 55, 40],
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(255, 205, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(201, 203, 207, 0.2)",
+            ],
+            borderColor: [
+              "rgb(255, 99, 132)",
+              "rgb(255, 159, 64)",
+              "rgb(255, 205, 86)",
+              "rgb(75, 192, 192)",
+              "rgb(54, 162, 235)",
+              "rgb(153, 102, 255)",
+              "rgb(201, 203, 207)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      };
+      const data3 = {
+        labels: ["Red", "Blue", "Yellow"],
+        datasets: [
+          {
+            label: "My First Dataset",
+            data: [300, 50, 100],
+            borderAlign: " center",
+            backgroundColor: [
+              "rgb(255, 99, 132)",
+              "rgb(54, 162, 235)",
+              "rgb(255, 205, 86)",
+            ],
+            hoverOffset: 4,
+          },
+        ],
+      };
+      new Chart(ctx, {
+        type: "radar",
+        data: data,
+        options: {
+          elements: {
+            line: {
+              borderWidth: 3,
+            },
+          },
+        },
+      });
+      new Chart(ctx2, {
+        type: "bar",
+        data: data2,
+        options: {
+          animation: {
+            onComplete: () => {
+              delayed = true;
+            },
+            delay: (context) => {
+              let delay = 0;
+              if (
+                context.type === "data" &&
+                context.mode === "default" &&
+                !delayed
+              ) {
+                delay = context.dataIndex * 300 + context.datasetIndex * 100;
+              }
+              return delay;
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+      new Chart(ctx3, {
+        type: "pie",
+        data: data3,
+        options: {
+          animation: {
+            onComplete: () => {
+              delayed = true;
+            },
+            delay: (context) => {
+              let delay = 0;
+              if (
+                context.type === "data" &&
+                context.mode === "default" &&
+                !delayed
+              ) {
+                delay = context.dataIndex * 300 + context.datasetIndex * 100;
+              }
+              return delay;
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

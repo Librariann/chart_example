@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>High Chart</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="container2"></div>
+    <div id="container3"></div>
+    <div id="container4"></div>
+    <div id="container5"></div>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/variable-pie.js"></script>
+    <script>
+      Highcharts.addEvent(Highcharts.Point, "click", function () {
+        if (this.series.options.className.indexOf("popup-on-click") !== -1) {
+          const chart = this.series.chart;
+          const date = Highcharts.dateFormat("%A, %b %e, %Y", this.x);
+          const text = `<b>${date}</b><br/>${this.y} ${this.series.name}`;
+
+          const anchorX = this.plotX + this.series.xAxis.pos;
+          const anchorY = this.plotY + this.series.yAxis.pos;
+          const align = anchorX < chart.chartWidth - 200 ? "left" : "right";
+          const x = align === "left" ? anchorX + 10 : anchorX - 10;
+          const y = anchorY - 30;
+          if (!chart.sticky) {
+            chart.sticky = chart.renderer
+              .label(text, x, y, "callout", anchorX, anchorY)
+              .attr({
+                align,
+                fill: "rgba(0, 0, 0, 0.75)",
+                padding: 10,
+                zIndex: 7, // Above series, below tooltip
+              })
+              .css({
+                color: "white",
+              })
+              .on("click", function () {
+                chart.sticky = chart.sticky.destroy();
+              })
+              .add();
+          } else {
+            chart.sticky
+              .attr({ align, text })
+              .animate({ anchorX, anchorY, x, y }, { duration: 250 });
+          }
+        }
+      });
+
+      Highcharts.chart("container", {
+        chart: {
+          scrollablePlotArea: {
+            minWidth: 700,
+          },
+        },
+
+        data: {
+          csvURL:
+            "https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv",
+          beforeParse: function (csv) {
+            return csv.replace(/\n\n/g, "\n");
+          },
+        },
+
+        title: {
+          text: "Daily sessions at www.highcharts.com",
+          align: "left",
+        },
+
+        subtitle: {
+          text: "Source: Google Analytics",
+          align: "left",
+        },
+
+        xAxis: {
+          tickInterval: 7 * 24 * 3600 * 1000, // one week
+          tickWidth: 0,
+          gridLineWidth: 1,
+          labels: {
+            align: "left",
+            x: 3,
+            y: -3,
+          },
+        },
+
+        yAxis: [
+          {
+            // left y axis
+            title: {
+              text: null,
+            },
+            labels: {
+              align: "left",
+              x: 3,
+              y: 16,
+              format: "{value:.,0f}",
+            },
+            showFirstLabel: false,
+          },
+          {
+            // right y axis
+            linkedTo: 0,
+            gridLineWidth: 0,
+            opposite: true,
+            title: {
+              text: null,
+            },
+            labels: {
+              align: "right",
+              x: -3,
+              y: 16,
+              format: "{value:.,0f}",
+            },
+            showFirstLabel: false,
+          },
+        ],
+
+        legend: {
+          align: "left",
+          verticalAlign: "top",
+          borderWidth: 0,
+        },
+
+        tooltip: {
+          shared: true,
+          crosshairs: true,
+        },
+
+        plotOptions: {
+          series: {
+            cursor: "pointer",
+            className: "popup-on-click",
+            marker: {
+              lineWidth: 1,
+            },
+          },
+        },
+
+        series: [
+          {
+            name: "All sessions",
+            lineWidth: 4,
+            marker: {
+              radius: 4,
+            },
+          },
+          {
+            name: "New users",
+          },
+        ],
+      });
+    </script>
+    <script>
+      Highcharts.chart("container2", {
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+          type: "pie",
+        },
+        title: {
+          text: "Browser market shares in May, 2020",
+          align: "left",
+        },
+        tooltip: {
+          pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>",
+        },
+        accessibility: {
+          point: {
+            valueSuffix: "%",
+          },
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: "pointer",
+            dataLabels: {
+              enabled: true,
+              format: "<b>{point.name}</b>: {point.percentage:.1f} %",
+            },
+          },
+        },
+        series: [
+          {
+            name: "Brands",
+            colorByPoint: true,
+            data: [
+              {
+                name: "Chrome",
+                y: 70.67,
+                sliced: true,
+                selected: true,
+              },
+              {
+                name: "Edge",
+                y: 14.77,
+              },
+              {
+                name: "Firefox",
+                y: 4.86,
+              },
+              {
+                name: "Safari",
+                y: 2.63,
+              },
+              {
+                name: "Internet Explorer",
+                y: 1.53,
+              },
+              {
+                name: "Opera",
+                y: 1.4,
+              },
+              {
+                name: "Sogou Explorer",
+                y: 0.84,
+              },
+              {
+                name: "QQ",
+                y: 0.51,
+              },
+              {
+                name: "Other",
+                y: 2.6,
+              },
+            ],
+          },
+        ],
+      });
+    </script>
+    <script>
+      Highcharts.chart("container3", {
+        chart: {
+          type: "variablepie",
+        },
+        title: {
+          text: "Countries compared by population density and total area, 2022.",
+          align: "left",
+        },
+        tooltip: {
+          headerFormat: "",
+          pointFormat:
+            '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
+            "Area (square km): <b>{point.y}</b><br/>" +
+            "Population density (people per square km): <b>{point.z}</b><br/>",
+        },
+        series: [
+          {
+            minPointSize: 10,
+            innerSize: "20%",
+            zMin: 0,
+            name: "countries",
+            borderRadius: 5,
+            data: [
+              {
+                name: "Spain",
+                y: 505992,
+                z: 92,
+              },
+              {
+                name: "France",
+                y: 551695,
+                z: 119,
+              },
+              {
+                name: "Poland",
+                y: 312679,
+                z: 121,
+              },
+              {
+                name: "Czech Republic",
+                y: 78865,
+                z: 136,
+              },
+              {
+                name: "Italy",
+                y: 301336,
+                z: 200,
+              },
+              {
+                name: "Switzerland",
+                y: 41284,
+                z: 213,
+              },
+              {
+                name: "Germany",
+                y: 357114,
+                z: 235,
+              },
+            ],
+            colors: [
+              "#4caefe",
+              "#3dc3e8",
+              "#2dd9db",
+              "#1feeaf",
+              "#0ff3a0",
+              "#00e887",
+              "#23e274",
+            ],
+          },
+        ],
+      });
+    </script>
+    <script>
+      Highcharts.chart("container4", {
+        title: {
+          text: "Sales of petroleum products March, Norway",
+          align: "left",
+        },
+        xAxis: {
+          categories: [
+            "Jet fuel",
+            "Duty-free diesel",
+            "Petrol",
+            "Diesel",
+            "Gas oil",
+          ],
+        },
+        yAxis: {
+          title: {
+            text: "Million liters",
+          },
+        },
+        tooltip: {
+          valueSuffix: " million liters",
+        },
+        plotOptions: {
+          series: {
+            borderRadius: "25%",
+          },
+        },
+        series: [
+          {
+            type: "column",
+            name: "2020",
+            data: [59, 83, 65, 228, 184],
+          },
+          {
+            type: "column",
+            name: "2021",
+            data: [24, 79, 72, 240, 167],
+          },
+          {
+            type: "column",
+            name: "2022",
+            data: [58, 88, 75, 250, 176],
+          },
+          {
+            type: "spline",
+            name: "Average",
+            data: [47, 83.33, 70.66, 239.33, 175.66],
+            marker: {
+              lineWidth: 2,
+              lineColor: Highcharts.getOptions().colors[3],
+              fillColor: "white",
+            },
+          },
+          {
+            type: "pie",
+            name: "Total",
+            data: [
+              {
+                name: "2020",
+                y: 619,
+                color: Highcharts.getOptions().colors[0], // 2020 color
+                dataLabels: {
+                  enabled: true,
+                  distance: -50,
+                  format: "{point.total} M",
+                  style: {
+                    fontSize: "15px",
+                  },
+                },
+              },
+              {
+                name: "2021",
+                y: 586,
+                color: Highcharts.getOptions().colors[1], // 2021 color
+              },
+              {
+                name: "2022",
+                y: 647,
+                color: Highcharts.getOptions().colors[2], // 2022 color
+              },
+            ],
+            center: [75, 65],
+            size: 100,
+            innerSize: "70%",
+            showInLegend: false,
+            dataLabels: {
+              enabled: false,
+            },
+          },
+        ],
+      });
+    </script>
+    <script>
+      Highcharts.chart("container5", {
+        chart: {
+          type: "spline",
+          animation: Highcharts.svg, // don't animate in old IE
+          marginRight: 10,
+          events: {
+            load: function () {
+              // set up the updating of the chart each second
+              var series = this.series[0];
+              setInterval(function () {
+                var x = new Date().getTime(), // current time
+                  y = Math.random();
+                series.addPoint([x, y], true, true);
+              }, 1000);
+            },
+          },
+        },
+
+        time: {
+          useUTC: false,
+        },
+
+        title: {
+          text: "Live random data",
+        },
+
+        accessibility: {
+          announceNewData: {
+            enabled: true,
+            minAnnounceInterval: 15000,
+            announcementFormatter: function (allSeries, newSeries, newPoint) {
+              if (newPoint) {
+                return "New point added. Value: " + newPoint.y;
+              }
+              return false;
+            },
+          },
+        },
+
+        xAxis: {
+          type: "datetime",
+          tickPixelInterval: 150,
+        },
+
+        yAxis: {
+          title: {
+            text: "Value",
+          },
+          plotLines: [
+            {
+              value: 0,
+              width: 1,
+              color: "#808080",
+            },
+          ],
+        },
+
+        tooltip: {
+          headerFormat: "<b>{series.name}</b><br/>",
+          pointFormat: "{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}",
+        },
+
+        legend: {
+          enabled: false,
+        },
+
+        exporting: {
+          enabled: false,
+        },
+
+        series: [
+          {
+            name: "Random data",
+            data: (function () {
+              // generate an array of random data
+              var data = [],
+                time = new Date().getTime(),
+                i;
+
+              for (i = -19; i <= 0; i += 1) {
+                data.push({
+                  x: time + i * 1000,
+                  y: Math.random(),
+                });
+              }
+              return data;
+            })(),
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>

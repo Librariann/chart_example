@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Am Chart</title>
+    <style>
+      #chartdiv {
+        width: 100%;
+        height: 500px;
+      }
+      #chartdiv2 {
+        width: 100%;
+        height: 550px;
+        max-width: 100%;
+      }
+      #chartdiv3 {
+        width: 100%;
+        height: 500px;
+      }
+      #chartdiv4 {
+        width: 100%;
+        height: 500px;
+      }
+      #chartdiv5 {
+        width: 100%;
+        height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chartdiv"></div>
+    <div id="chartdiv2"></div>
+    <div id="chartdiv3"></div>
+    <div id="chartdiv4"></div>
+    <div id="chartdiv5"></div>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/hierarchy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/flow.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/southKoreaHigh.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/usaHigh.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/wc.js"></script>
+
+    <script>
+      am5.ready(function () {
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("chartdiv");
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Create chart
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/
+        var chart = root.container.children.push(
+          am5xy.XYChart.new(root, {
+            panX: true,
+            panY: true,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            pinchZoomX: true,
+          })
+        );
+
+        // Add cursor
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+        cursor.lineY.set("visible", false);
+
+        // Create axes
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+        var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+        xRenderer.labels.template.setAll({
+          rotation: -90,
+          centerY: am5.p50,
+          centerX: am5.p100,
+          paddingRight: 15,
+        });
+
+        xRenderer.grid.template.setAll({
+          location: 1,
+        });
+
+        var xAxis = chart.xAxes.push(
+          am5xy.CategoryAxis.new(root, {
+            maxDeviation: 0.3,
+            categoryField: "country",
+            renderer: xRenderer,
+            tooltip: am5.Tooltip.new(root, {}),
+          })
+        );
+
+        var yAxis = chart.yAxes.push(
+          am5xy.ValueAxis.new(root, {
+            maxDeviation: 0.3,
+            renderer: am5xy.AxisRendererY.new(root, {
+              strokeOpacity: 0.1,
+            }),
+          })
+        );
+
+        // Create series
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+        var series = chart.series.push(
+          am5xy.ColumnSeries.new(root, {
+            name: "Series 1",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "value",
+            sequencedInterpolation: true,
+            categoryXField: "country",
+            tooltip: am5.Tooltip.new(root, {
+              labelText: "{valueY}",
+            }),
+          })
+        );
+
+        series.columns.template.setAll({
+          cornerRadiusTL: 5,
+          cornerRadiusTR: 5,
+          strokeOpacity: 0,
+        });
+        series.columns.template.adapters.add("fill", function (fill, target) {
+          return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        series.columns.template.adapters.add(
+          "stroke",
+          function (stroke, target) {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+          }
+        );
+
+        // Set data
+        var data = [
+          {
+            country: "USA",
+            value: 2025,
+          },
+          {
+            country: "China",
+            value: 1882,
+          },
+          {
+            country: "Japan",
+            value: 1809,
+          },
+          {
+            country: "Germany",
+            value: 1322,
+          },
+          {
+            country: "UK",
+            value: 1122,
+          },
+          {
+            country: "France",
+            value: 1114,
+          },
+          {
+            country: "India",
+            value: 984,
+          },
+          {
+            country: "Spain",
+            value: 711,
+          },
+          {
+            country: "Netherlands",
+            value: 665,
+          },
+          {
+            country: "South Korea",
+            value: 443,
+          },
+          {
+            country: "Canada",
+            value: 441,
+          },
+        ];
+
+        xAxis.data.setAll(data);
+        series.data.setAll(data);
+
+        // Make stuff animate on load
+        // https://www.amcharts.com/docs/v5/concepts/animations/
+        series.appear(1000);
+        chart.appear(1000, 100);
+      }); // end am5.ready()
+    </script>
+    <script>
+      am5.ready(function () {
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("chartdiv2");
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Create wrapper container
+        var container = root.container.children.push(
+          am5.Container.new(root, {
+            width: am5.percent(100),
+            height: am5.percent(100),
+            layout: root.verticalLayout,
+          })
+        );
+
+        // Create series
+        // https://www.amcharts.com/docs/v5/charts/hierarchy/#Adding
+        var series = container.children.push(
+          am5hierarchy.ForceDirected.new(root, {
+            singleBranchOnly: false,
+            downDepth: 1,
+            initialDepth: 2,
+            valueField: "value",
+            categoryField: "name",
+            childDataField: "children",
+            centerStrength: 0.5,
+          })
+        );
+
+        // Generate and set data
+        // https://www.amcharts.com/docs/v5/charts/hierarchy/#Setting_data
+        var maxLevels = 2;
+        var maxNodes = 5;
+        var maxValue = 100;
+
+        var data = {
+          name: "Root",
+          children: [],
+        };
+        generateLevel(data, "", 0);
+
+        series.data.setAll([data]);
+        series.set("selectedDataItem", series.dataItems[0]);
+
+        function generateLevel(data, name, level) {
+          for (var i = 0; i < Math.ceil(maxNodes * Math.random()) + 1; i++) {
+            var nodeName = name + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i];
+            var child;
+            if (level < maxLevels) {
+              child = {
+                name: nodeName + level,
+              };
+
+              if (level > 0 && Math.random() < 0.5) {
+                child.value = Math.round(Math.random() * maxValue);
+              } else {
+                child.children = [];
+                generateLevel(child, nodeName + i, level + 1);
+              }
+            } else {
+              child = {
+                name: name + i,
+                value: Math.round(Math.random() * maxValue),
+              };
+            }
+            data.children.push(child);
+          }
+
+          level++;
+          return data;
+        }
+
+        // Make stuff animate on load
+        series.appear(1000, 100);
+      }); // end am5.ready()
+    </script>
+    <script>
+      am5.ready(function () {
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("chartdiv3");
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Create series
+        // https://www.amcharts.com/docs/v5/charts/flow-charts/
+        var series = root.container.children.push(
+          am5flow.ChordDirected.new(root, {
+            sourceIdField: "from",
+            targetIdField: "to",
+            valueField: "value",
+            sort: "ascending",
+          })
+        );
+
+        series.links.template.set("fillStyle", "source");
+
+        series.nodes.get("colors").set("step", 2);
+        series.nodes.data.setAll([
+          { id: "A" },
+          { id: "B" },
+          { id: "C" },
+          { id: "D" },
+          { id: "E" },
+          { id: "F" },
+        ]);
+
+        series.nodes.get("colors").set("step", 2);
+
+        series.bullets.push(function (_root, _series, dataItem) {
+          var bullet = am5.Bullet.new(root, {
+            locationY: Math.random(),
+            sprite: am5.Circle.new(root, {
+              radius: 5,
+              fill: dataItem.get("source").get("fill"),
+            }),
+          });
+
+          bullet.animate({
+            key: "locationY",
+            to: 1,
+            from: 0,
+            duration: Math.random() * 1000 + 2000,
+            loops: Infinity,
+          });
+
+          return bullet;
+        });
+
+        series.nodes.labels.template.setAll({
+          textType: "regular",
+          fill: root.interfaceColors.get("background"),
+          fontSize: "1.1em",
+          radius: -5,
+        });
+
+        series.nodes.bullets.push(function (_root, _series, dataItem) {
+          return am5.Bullet.new(root, {
+            sprite: am5.Circle.new(root, {
+              radius: 20,
+              fill: dataItem.get("fill"),
+            }),
+          });
+        });
+
+        series.children.moveValue(series.bulletsContainer, 0);
+
+        // Set data
+        // https://www.amcharts.com/docs/v5/charts/flow-charts/#Setting_data
+        series.data.setAll([
+          { from: "A", to: "D", value: 10 },
+          { from: "B", to: "C", value: 8 },
+          { from: "B", to: "D", value: 4 },
+          { from: "B", to: "E", value: 2 },
+          { from: "C", to: "A", value: 14 },
+          { from: "C", to: "E", value: 4 },
+          { from: "E", to: "D", value: 8 },
+          { from: "F", to: "A", value: 7 },
+          { from: "D", to: "B", value: 2 },
+        ]);
+
+        // Make stuff animate on load
+        series.appear(1000, 100);
+      }); // end am5.ready()
+    </script>
+    <script>
+      am5.ready(function () {
+        // ===========================================================
+        // Data
+        // ===========================================================
+
+        var usData = [
+          {
+            age: "0 to 5",
+            male: 10175713,
+            female: 9736305,
+          },
+          {
+            age: "5 to 9",
+            male: 10470147,
+            female: 10031835,
+          },
+          {
+            age: "10 to 14",
+            male: 10561873,
+            female: 10117913,
+          },
+          {
+            age: "15 to 17",
+            male: 6447043,
+            female: 6142996,
+          },
+          {
+            age: "18 to 21",
+            male: 9349745,
+            female: 8874664,
+          },
+          {
+            age: "22 to 24",
+            male: 6722248,
+            female: 6422017,
+          },
+          {
+            age: "25 to 29",
+            male: 10989596,
+            female: 10708414,
+          },
+          {
+            age: "30 to 34",
+            male: 10625791,
+            female: 10557848,
+          },
+          {
+            age: "35 to 39",
+            male: 9899569,
+            female: 9956213,
+          },
+          {
+            age: "40 to 44",
+            male: 10330986,
+            female: 10465142,
+          },
+          {
+            age: "45 to 49",
+            male: 10571984,
+            female: 10798384,
+          },
+          {
+            age: "50 to 54",
+            male: 11051409,
+            female: 11474081,
+          },
+          {
+            age: "55 to 59",
+            male: 10173646,
+            female: 10828301,
+          },
+          {
+            age: "60 to 64",
+            male: 8824852,
+            female: 9590829,
+          },
+          {
+            age: "65 to 69",
+            male: 6876271,
+            female: 7671175,
+          },
+          {
+            age: "70 to 74",
+            male: 4867513,
+            female: 5720208,
+          },
+          {
+            age: "75 to 79",
+            male: 3416432,
+            female: 4313697,
+          },
+        ];
+
+        var stateData = {
+          50: [
+            {
+              age: "0 to 5",
+              male: 28346,
+              female: 26607,
+            },
+            {
+              age: "10 to 14",
+              male: 26350,
+              female: 24821,
+            },
+            {
+              age: "15 to 17",
+              male: 15929,
+              female: 14735,
+            },
+            {
+              age: "18 to 21",
+              male: 25360,
+              female: 19030,
+            },
+            {
+              age: "22 to 24",
+              male: 20755,
+              female: 15663,
+            },
+            {
+              age: "25 to 29",
+              male: 32415,
+              female: 28259,
+            },
+            {
+              age: "30 to 34",
+              male: 28232,
+              female: 25272,
+            },
+            {
+              age: "35 to 39",
+              male: 24217,
+              female: 22002,
+            },
+            {
+              age: "40 to 44",
+              male: 23429,
+              female: 21968,
+            },
+            {
+              age: "45 to 49",
+              male: 24764,
+              female: 22784,
+            },
+            {
+              age: "5 to 9",
+              male: 26276,
+              female: 25063,
+            },
+            {
+              age: "50 to 54",
+              male: 27623,
+              female: 25503,
+            },
+            {
+              age: "55 to 59",
+              male: 26300,
+              female: 25198,
+            },
+            {
+              age: "60 to 64",
+              male: 21798,
+              female: 18970,
+            },
+            {
+              age: "65 to 69",
+              male: 13758,
+              female: 12899,
+            },
+            {
+              age: "70 to 74",
+              male: 8877,
+              female: 8269,
+            },
+            {
+              age: "75 to 79",
+              male: 4834,
+              female: 4894,
+            },
+            {
+              age: "80 to 84",
+              male: 3015,
+              female: 3758,
+            },
+            {
+              age: "85 and Older",
+              male: 1882,
+              female: 3520,
+            },
+          ],
+          11: [
+            {
+              age: "0 to 5",
+              male: 150860,
+              female: 144194,
+            },
+            {
+              age: "10 to 14",
+              male: 161596,
+              female: 156841,
+            },
+            {
+              age: "15 to 17",
+              male: 98307,
+              female: 94462,
+            },
+            {
+              age: "18 to 21",
+              male: 142173,
+              female: 136514,
+            },
+            {
+              age: "22 to 24",
+              male: 99164,
+              female: 101444,
+            },
+            {
+              age: "25 to 29",
+              male: 154977,
+              female: 159815,
+            },
+            {
+              age: "30 to 34",
+              male: 150036,
+              female: 156764,
+            },
+            {
+              age: "35 to 39",
+              male: 141667,
+              female: 152220,
+            },
+            {
+              age: "40 to 44",
+              male: 155693,
+              female: 159835,
+            },
+            {
+              age: "45 to 49",
+              male: 156413,
+              female: 163909,
+            },
+            {
+              age: "5 to 9",
+              male: 156380,
+              female: 149334,
+            },
+            {
+              age: "50 to 54",
+              male: 166863,
+              female: 178187,
+            },
+            {
+              age: "55 to 59",
+              male: 156994,
+              female: 169355,
+            },
+            {
+              age: "60 to 64",
+              male: 140659,
+              female: 156638,
+            },
+            {
+              age: "65 to 69",
+              male: 112724,
+              female: 128494,
+            },
+            {
+              age: "70 to 74",
+              male: 79258,
+              female: 96507,
+            },
+            {
+              age: "75 to 79",
+              male: 55122,
+              female: 75371,
+            },
+            {
+              age: "80 to 84",
+              male: 36252,
+              female: 53976,
+            },
+            {
+              age: "85 and Older",
+              male: 25955,
+              female: 55667,
+            },
+          ],
+          26: [
+            {
+              age: "0 to 5",
+              male: 98246,
+              female: 93534,
+            },
+            {
+              age: "10 to 14",
+              male: 99707,
+              female: 96862,
+            },
+            {
+              age: "15 to 17",
+              male: 60521,
+              female: 57735,
+            },
+            {
+              age: "18 to 21",
+              male: 87209,
+              female: 81936,
+            },
+            {
+              age: "22 to 24",
+              male: 59114,
+              female: 59387,
+            },
+            {
+              age: "25 to 29",
+              male: 96190,
+              female: 96573,
+            },
+            {
+              age: "30 to 34",
+              male: 96273,
+              female: 95632,
+            },
+            {
+              age: "35 to 39",
+              male: 90371,
+              female: 90620,
+            },
+            {
+              age: "40 to 44",
+              male: 91881,
+              female: 93777,
+            },
+            {
+              age: "45 to 49",
+              male: 93238,
+              female: 95476,
+            },
+            {
+              age: "5 to 9",
+              male: 103613,
+              female: 97603,
+            },
+            {
+              age: "50 to 54",
+              male: 98960,
+              female: 102953,
+            },
+            {
+              age: "55 to 59",
+              male: 92133,
+              female: 100676,
+            },
+            {
+              age: "60 to 64",
+              male: 84082,
+              female: 90243,
+            },
+            {
+              age: "65 to 69",
+              male: 70121,
+              female: 76669,
+            },
+            {
+              age: "70 to 74",
+              male: 52154,
+              female: 61686,
+            },
+            {
+              age: "75 to 79",
+              male: 36856,
+              female: 44371,
+            },
+            {
+              age: "80 to 84",
+              male: 23098,
+              female: 35328,
+            },
+            {
+              age: "85 and Older",
+              male: 18146,
+              female: 35234,
+            },
+          ],
+          27: [
+            {
+              age: "0 to 5",
+              male: 221511,
+              female: 212324,
+            },
+            {
+              age: "10 to 14",
+              male: 233530,
+              female: 222965,
+            },
+            {
+              age: "15 to 17",
+              male: 138926,
+              female: 132399,
+            },
+            {
+              age: "18 to 21",
+              male: 200240,
+              female: 187786,
+            },
+            {
+              age: "22 to 24",
+              male: 142852,
+              female: 132457,
+            },
+            {
+              age: "25 to 29",
+              male: 231488,
+              female: 215985,
+            },
+            {
+              age: "30 to 34",
+              male: 223754,
+              female: 214946,
+            },
+            {
+              age: "35 to 39",
+              male: 206718,
+              female: 202482,
+            },
+            {
+              age: "40 to 44",
+              male: 213591,
+              female: 210621,
+            },
+            {
+              age: "45 to 49",
+              male: 205830,
+              female: 206081,
+            },
+            {
+              age: "5 to 9",
+              male: 231249,
+              female: 224385,
+            },
+            {
+              age: "50 to 54",
+              male: 210386,
+              female: 218328,
+            },
+            {
+              age: "55 to 59",
+              male: 192614,
+              female: 209767,
+            },
+            {
+              age: "60 to 64",
+              male: 178325,
+              female: 200313,
+            },
+            {
+              age: "65 to 69",
+              male: 155852,
+              female: 174407,
+            },
+            {
+              age: "70 to 74",
+              male: 121878,
+              female: 136840,
+            },
+            {
+              age: "75 to 79",
+              male: 87470,
+              female: 96953,
+            },
+            {
+              age: "80 to 84",
+              male: 58553,
+              female: 69559,
+            },
+            {
+              age: "85 and Older",
+              male: 44321,
+              female: 74242,
+            },
+          ],
+          28: [
+            {
+              age: "0 to 5",
+              male: 1283763,
+              female: 1228013,
+            },
+            {
+              age: "10 to 14",
+              male: 1297819,
+              female: 1245016,
+            },
+            {
+              age: "15 to 17",
+              male: 811114,
+              female: 773387,
+            },
+            {
+              age: "18 to 21",
+              male: 1179739,
+              female: 1100368,
+            },
+            {
+              age: "22 to 24",
+              male: 883323,
+              female: 825833,
+            },
+            {
+              age: "25 to 29",
+              male: 1478557,
+              female: 1387516,
+            },
+            {
+              age: "30 to 34",
+              male: 1399835,
+              female: 1348430,
+            },
+            {
+              age: "35 to 39",
+              male: 1287803,
+              female: 1271908,
+            },
+            {
+              age: "40 to 44",
+              male: 1308311,
+              female: 1309907,
+            },
+            {
+              age: "45 to 49",
+              male: 1306719,
+              female: 1303528,
+            },
+            {
+              age: "5 to 9",
+              male: 1295030,
+              female: 1240201,
+            },
+            {
+              age: "50 to 54",
+              male: 1305323,
+              female: 1330645,
+            },
+            {
+              age: "55 to 59",
+              male: 1161821,
+              female: 1223440,
+            },
+            {
+              age: "60 to 64",
+              male: 975874,
+              female: 1060921,
+            },
+            {
+              age: "65 to 69",
+              male: 734814,
+              female: 833926,
+            },
+            {
+              age: "70 to 74",
+              male: 515115,
+              female: 604615,
+            },
+            {
+              age: "75 to 79",
+              male: 363282,
+              female: 455568,
+            },
+            {
+              age: "80 to 84",
+              male: 264126,
+              female: 363937,
+            },
+            {
+              age: "85 and Older",
+              male: 234767,
+              female: 427170,
+            },
+          ],
+          29: [
+            {
+              age: "0 to 5",
+              male: 173245,
+              female: 163629,
+            },
+            {
+              age: "10 to 14",
+              male: 179579,
+              female: 170930,
+            },
+            {
+              age: "15 to 17",
+              male: 102577,
+              female: 98569,
+            },
+            {
+              age: "18 to 21",
+              male: 152713,
+              female: 139268,
+            },
+            {
+              age: "22 to 24",
+              male: 116654,
+              female: 108238,
+            },
+            {
+              age: "25 to 29",
+              male: 204625,
+              female: 188680,
+            },
+            {
+              age: "30 to 34",
+              male: 200624,
+              female: 188616,
+            },
+            {
+              age: "35 to 39",
+              male: 183386,
+              female: 175326,
+            },
+            {
+              age: "40 to 44",
+              male: 184422,
+              female: 173654,
+            },
+            {
+              age: "45 to 49",
+              male: 174730,
+              female: 172981,
+            },
+            {
+              age: "5 to 9",
+              male: 179803,
+              female: 173524,
+            },
+            {
+              age: "50 to 54",
+              male: 183543,
+              female: 187757,
+            },
+            {
+              age: "55 to 59",
+              male: 170717,
+              female: 179537,
+            },
+            {
+              age: "60 to 64",
+              male: 150815,
+              female: 155924,
+            },
+            {
+              age: "65 to 69",
+              male: 111094,
+              female: 119530,
+            },
+            {
+              age: "70 to 74",
+              male: 72252,
+              female: 80168,
+            },
+            {
+              age: "75 to 79",
+              male: 49142,
+              female: 59393,
+            },
+            {
+              age: "80 to 84",
+              male: 31894,
+              female: 43881,
+            },
+            {
+              age: "85 and Older",
+              male: 26852,
+              female: 50634,
+            },
+          ],
+          30: [
+            {
+              age: "0 to 5",
+              male: 97647,
+              female: 93798,
+            },
+            {
+              age: "10 to 14",
+              male: 118032,
+              female: 113043,
+            },
+            {
+              age: "15 to 17",
+              male: 75546,
+              female: 71687,
+            },
+            {
+              age: "18 to 21",
+              male: 106966,
+              female: 102763,
+            },
+            {
+              age: "22 to 24",
+              male: 71125,
+              female: 64777,
+            },
+            {
+              age: "25 to 29",
+              male: 112189,
+              female: 108170,
+            },
+            {
+              age: "30 to 34",
+              male: 107223,
+              female: 109096,
+            },
+            {
+              age: "35 to 39",
+              male: 102424,
+              female: 106008,
+            },
+            {
+              age: "40 to 44",
+              male: 116664,
+              female: 123744,
+            },
+            {
+              age: "45 to 49",
+              male: 131872,
+              female: 139406,
+            },
+            {
+              age: "5 to 9",
+              male: 110043,
+              female: 104940,
+            },
+            {
+              age: "50 to 54",
+              male: 138644,
+              female: 146532,
+            },
+            {
+              age: "55 to 59",
+              male: 126670,
+              female: 132895,
+            },
+            {
+              age: "60 to 64",
+              male: 104701,
+              female: 114339,
+            },
+            {
+              age: "65 to 69",
+              male: 80178,
+              female: 91052,
+            },
+            {
+              age: "70 to 74",
+              male: 55237,
+              female: 65488,
+            },
+            {
+              age: "75 to 79",
+              male: 38844,
+              female: 51544,
+            },
+            {
+              age: "80 to 84",
+              male: 28908,
+              female: 43036,
+            },
+            {
+              age: "85 and Older",
+              male: 28694,
+              female: 59297,
+            },
+          ],
+          31: [
+            {
+              age: "0 to 5",
+              male: 20585,
+              female: 19848,
+            },
+            {
+              age: "10 to 14",
+              male: 12723,
+              female: 11991,
+            },
+            {
+              age: "15 to 17",
+              male: 7740,
+              female: 7901,
+            },
+            {
+              age: "18 to 21",
+              male: 22350,
+              female: 25467,
+            },
+            {
+              age: "22 to 24",
+              male: 15325,
+              female: 19085,
+            },
+            {
+              age: "25 to 29",
+              male: 35295,
+              female: 41913,
+            },
+            {
+              age: "30 to 34",
+              male: 32716,
+              female: 35553,
+            },
+            {
+              age: "35 to 39",
+              male: 23748,
+              female: 24922,
+            },
+            {
+              age: "40 to 44",
+              male: 21158,
+              female: 20113,
+            },
+            {
+              age: "45 to 49",
+              male: 19279,
+              female: 18956,
+            },
+            {
+              age: "5 to 9",
+              male: 14999,
+              female: 15518,
+            },
+            {
+              age: "50 to 54",
+              male: 19249,
+              female: 19279,
+            },
+            {
+              age: "55 to 59",
+              male: 17592,
+              female: 18716,
+            },
+            {
+              age: "60 to 64",
+              male: 14272,
+              female: 17892,
+            },
+            {
+              age: "65 to 69",
+              male: 9740,
+              female: 13375,
+            },
+            {
+              age: "70 to 74",
+              male: 8221,
+              female: 9761,
+            },
+            {
+              age: "75 to 79",
+              male: 5071,
+              female: 7601,
+            },
+            {
+              age: "80 to 84",
+              male: 3399,
+              female: 5619,
+            },
+            {
+              age: "85 and Older",
+              male: 3212,
+              female: 7300,
+            },
+          ],
+          41: [
+            {
+              age: "0 to 5",
+              male: 28382,
+              female: 27430,
+            },
+            {
+              age: "10 to 14",
+              male: 29482,
+              female: 27484,
+            },
+            {
+              age: "15 to 17",
+              male: 17589,
+              female: 16828,
+            },
+            {
+              age: "18 to 21",
+              male: 26852,
+              female: 26911,
+            },
+            {
+              age: "22 to 24",
+              male: 19006,
+              female: 18413,
+            },
+            {
+              age: "25 to 29",
+              male: 30933,
+              female: 31146,
+            },
+            {
+              age: "30 to 34",
+              male: 28602,
+              female: 29431,
+            },
+            {
+              age: "35 to 39",
+              male: 26498,
+              female: 28738,
+            },
+            {
+              age: "40 to 44",
+              male: 27674,
+              female: 28519,
+            },
+            {
+              age: "45 to 49",
+              male: 30582,
+              female: 32924,
+            },
+            {
+              age: "5 to 9",
+              male: 28224,
+              female: 28735,
+            },
+            {
+              age: "50 to 54",
+              male: 32444,
+              female: 35052,
+            },
+            {
+              age: "55 to 59",
+              male: 29048,
+              female: 34377,
+            },
+            {
+              age: "60 to 64",
+              male: 27925,
+              female: 30017,
+            },
+            {
+              age: "65 to 69",
+              male: 22767,
+              female: 26707,
+            },
+            {
+              age: "70 to 74",
+              male: 17121,
+              female: 19327,
+            },
+            {
+              age: "75 to 79",
+              male: 11479,
+              female: 14264,
+            },
+            {
+              age: "80 to 84",
+              male: 7473,
+              female: 10353,
+            },
+            {
+              age: "85 and Older",
+              male: 6332,
+              female: 11385,
+            },
+          ],
+          42: [
+            {
+              age: "0 to 5",
+              male: 552054,
+              female: 529003,
+            },
+            {
+              age: "10 to 14",
+              male: 582351,
+              female: 558377,
+            },
+            {
+              age: "15 to 17",
+              male: 363538,
+              female: 345048,
+            },
+            {
+              age: "18 to 21",
+              male: 528013,
+              female: 498162,
+            },
+            {
+              age: "22 to 24",
+              male: 385515,
+              female: 368754,
+            },
+            {
+              age: "25 to 29",
+              male: 641710,
+              female: 622134,
+            },
+            {
+              age: "30 to 34",
+              male: 602467,
+              female: 602634,
+            },
+            {
+              age: "35 to 39",
+              male: 579722,
+              female: 585089,
+            },
+            {
+              age: "40 to 44",
+              male: 623074,
+              female: 639410,
+            },
+            {
+              age: "45 to 49",
+              male: 659376,
+              female: 677305,
+            },
+            {
+              age: "5 to 9",
+              male: 567479,
+              female: 543273,
+            },
+            {
+              age: "50 to 54",
+              male: 687625,
+              female: 723103,
+            },
+            {
+              age: "55 to 59",
+              male: 626363,
+              female: 685728,
+            },
+            {
+              age: "60 to 64",
+              male: 566282,
+              female: 651192,
+            },
+            {
+              age: "65 to 69",
+              male: 517513,
+              female: 589377,
+            },
+            {
+              age: "70 to 74",
+              male: 407275,
+              female: 470688,
+            },
+            {
+              age: "75 to 79",
+              male: 305530,
+              female: 361107,
+            },
+            {
+              age: "80 to 84",
+              male: 219362,
+              female: 281016,
+            },
+            {
+              age: "85 and Older",
+              male: 184760,
+              female: 314363,
+            },
+          ],
+          43: [
+            {
+              age: "0 to 5",
+              male: 338979,
+              female: 326326,
+            },
+            {
+              age: "10 to 14",
+              male: 356404,
+              female: 351833,
+            },
+            {
+              age: "15 to 17",
+              male: 211908,
+              female: 203412,
+            },
+            {
+              age: "18 to 21",
+              male: 305617,
+              female: 289233,
+            },
+            {
+              age: "22 to 24",
+              male: 214032,
+              female: 206526,
+            },
+            {
+              age: "25 to 29",
+              male: 342885,
+              female: 343115,
+            },
+            {
+              age: "30 to 34",
+              male: 333159,
+              female: 348125,
+            },
+            {
+              age: "35 to 39",
+              male: 325121,
+              female: 345251,
+            },
+            {
+              age: "40 to 44",
+              male: 348120,
+              female: 363703,
+            },
+            {
+              age: "45 to 49",
+              male: 343559,
+              female: 358754,
+            },
+            {
+              age: "5 to 9",
+              male: 362147,
+              female: 340071,
+            },
+            {
+              age: "50 to 54",
+              male: 338424,
+              female: 359362,
+            },
+            {
+              age: "55 to 59",
+              male: 294734,
+              female: 325653,
+            },
+            {
+              age: "60 to 64",
+              male: 254497,
+              female: 285276,
+            },
+            {
+              age: "65 to 69",
+              male: 198714,
+              female: 226714,
+            },
+            {
+              age: "70 to 74",
+              male: 135107,
+              female: 164091,
+            },
+            {
+              age: "75 to 79",
+              male: 88135,
+              female: 115830,
+            },
+            {
+              age: "80 to 84",
+              male: 53792,
+              female: 84961,
+            },
+            {
+              age: "85 and Older",
+              male: 37997,
+              female: 85126,
+            },
+          ],
+          44: [
+            {
+              age: "0 to 5",
+              male: 46668,
+              female: 44389,
+            },
+            {
+              age: "10 to 14",
+              male: 42590,
+              female: 41289,
+            },
+            {
+              age: "15 to 17",
+              male: 24759,
+              female: 23961,
+            },
+            {
+              age: "18 to 21",
+              male: 39937,
+              female: 32348,
+            },
+            {
+              age: "22 to 24",
+              male: 35270,
+              female: 28495,
+            },
+            {
+              age: "25 to 29",
+              male: 58033,
+              female: 48700,
+            },
+            {
+              age: "30 to 34",
+              male: 51544,
+              female: 47286,
+            },
+            {
+              age: "35 to 39",
+              male: 44144,
+              female: 42208,
+            },
+            {
+              age: "40 to 44",
+              male: 45731,
+              female: 43404,
+            },
+            {
+              age: "45 to 49",
+              male: 44336,
+              female: 44134,
+            },
+            {
+              age: "5 to 9",
+              male: 44115,
+              female: 40426,
+            },
+            {
+              age: "50 to 54",
+              male: 46481,
+              female: 46908,
+            },
+            {
+              age: "55 to 59",
+              male: 45959,
+              female: 47379,
+            },
+            {
+              age: "60 to 64",
+              male: 42420,
+              female: 43735,
+            },
+            {
+              age: "65 to 69",
+              male: 34846,
+              female: 36670,
+            },
+            {
+              age: "70 to 74",
+              male: 22981,
+              female: 25496,
+            },
+            {
+              age: "75 to 79",
+              male: 15219,
+              female: 18755,
+            },
+            {
+              age: "80 to 84",
+              male: 11142,
+              female: 17952,
+            },
+            {
+              age: "85 and Older",
+              male: 13696,
+              female: 22893,
+            },
+          ],
+          45: [
+            {
+              age: "0 to 5",
+              male: 100400,
+              female: 96170,
+            },
+            {
+              age: "10 to 14",
+              male: 104674,
+              female: 98485,
+            },
+            {
+              age: "15 to 17",
+              male: 62452,
+              female: 59605,
+            },
+            {
+              age: "18 to 21",
+              male: 96966,
+              female: 91782,
+            },
+            {
+              age: "22 to 24",
+              male: 66307,
+              female: 62504,
+            },
+            {
+              age: "25 to 29",
+              male: 98079,
+              female: 93653,
+            },
+            {
+              age: "30 to 34",
+              male: 100924,
+              female: 97248,
+            },
+            {
+              age: "35 to 39",
+              male: 90980,
+              female: 89632,
+            },
+            {
+              age: "40 to 44",
+              male: 92961,
+              female: 90218,
+            },
+            {
+              age: "45 to 49",
+              male: 98877,
+              female: 96654,
+            },
+            {
+              age: "5 to 9",
+              male: 104279,
+              female: 100558,
+            },
+            {
+              age: "50 to 54",
+              male: 109267,
+              female: 110142,
+            },
+            {
+              age: "55 to 59",
+              male: 104021,
+              female: 106042,
+            },
+            {
+              age: "60 to 64",
+              male: 95379,
+              female: 95499,
+            },
+            {
+              age: "65 to 69",
+              male: 68276,
+              female: 73624,
+            },
+            {
+              age: "70 to 74",
+              male: 50414,
+              female: 56973,
+            },
+            {
+              age: "75 to 79",
+              male: 37867,
+              female: 48121,
+            },
+            {
+              age: "80 to 84",
+              male: 27523,
+              female: 39851,
+            },
+            {
+              age: "85 and Older",
+              male: 24949,
+              female: 52170,
+            },
+          ],
+          46: [
+            {
+              age: "0 to 5",
+              male: 58355,
+              female: 56478,
+            },
+            {
+              age: "10 to 14",
+              male: 62528,
+              female: 59881,
+            },
+            {
+              age: "15 to 17",
+              male: 36373,
+              female: 33687,
+            },
+            {
+              age: "18 to 21",
+              male: 45752,
+              female: 45590,
+            },
+            {
+              age: "22 to 24",
+              male: 34595,
+              female: 30216,
+            },
+            {
+              age: "25 to 29",
+              male: 53998,
+              female: 52077,
+            },
+            {
+              age: "30 to 34",
+              male: 54217,
+              female: 52091,
+            },
+            {
+              age: "35 to 39",
+              male: 51247,
+              female: 47801,
+            },
+            {
+              age: "40 to 44",
+              male: 49113,
+              female: 49853,
+            },
+            {
+              age: "45 to 49",
+              male: 48392,
+              female: 48288,
+            },
+            {
+              age: "5 to 9",
+              male: 63107,
+              female: 59237,
+            },
+            {
+              age: "50 to 54",
+              male: 51805,
+              female: 52984,
+            },
+            {
+              age: "55 to 59",
+              male: 49226,
+              female: 51868,
+            },
+            {
+              age: "60 to 64",
+              male: 47343,
+              female: 47631,
+            },
+            {
+              age: "65 to 69",
+              male: 38436,
+              female: 38133,
+            },
+            {
+              age: "70 to 74",
+              male: 26243,
+              female: 28577,
+            },
+            {
+              age: "75 to 79",
+              male: 18404,
+              female: 20325,
+            },
+            {
+              age: "80 to 84",
+              male: 11653,
+              female: 15313,
+            },
+            {
+              age: "85 and Older",
+              male: 9677,
+              female: 16053,
+            },
+          ],
+          47: [
+            {
+              age: "0 to 5",
+              male: 408295,
+              female: 392900,
+            },
+            {
+              age: "10 to 14",
+              male: 437688,
+              female: 419077,
+            },
+            {
+              age: "15 to 17",
+              male: 269202,
+              female: 257213,
+            },
+            {
+              age: "18 to 21",
+              male: 369219,
+              female: 353570,
+            },
+            {
+              age: "22 to 24",
+              male: 268501,
+              female: 258559,
+            },
+            {
+              age: "25 to 29",
+              male: 448001,
+              female: 442418,
+            },
+            {
+              age: "30 to 34",
+              male: 445416,
+              female: 445729,
+            },
+            {
+              age: "35 to 39",
+              male: 416265,
+              female: 418999,
+            },
+            {
+              age: "40 to 44",
+              male: 425825,
+              female: 427573,
+            },
+            {
+              age: "45 to 49",
+              male: 433177,
+              female: 441116,
+            },
+            {
+              age: "5 to 9",
+              male: 427121,
+              female: 412238,
+            },
+            {
+              age: "50 to 54",
+              male: 454039,
+              female: 470982,
+            },
+            {
+              age: "55 to 59",
+              male: 414948,
+              female: 442280,
+            },
+            {
+              age: "60 to 64",
+              male: 354782,
+              female: 380640,
+            },
+            {
+              age: "65 to 69",
+              male: 259363,
+              female: 292899,
+            },
+            {
+              age: "70 to 74",
+              male: 184622,
+              female: 223905,
+            },
+            {
+              age: "75 to 79",
+              male: 129016,
+              female: 171743,
+            },
+            {
+              age: "80 to 84",
+              male: 91973,
+              female: 139204,
+            },
+            {
+              age: "85 and Older",
+              male: 79446,
+              female: 165817,
+            },
+          ],
+          48: [
+            {
+              age: "0 to 5",
+              male: 215697,
+              female: 205242,
+            },
+            {
+              age: "10 to 14",
+              male: 229911,
+              female: 221563,
+            },
+            {
+              age: "15 to 17",
+              male: 139494,
+              female: 132879,
+            },
+            {
+              age: "18 to 21",
+              male: 198763,
+              female: 194206,
+            },
+            {
+              age: "22 to 24",
+              male: 140805,
+              female: 131947,
+            },
+            {
+              age: "25 to 29",
+              male: 210315,
+              female: 208593,
+            },
+            {
+              age: "30 to 34",
+              male: 211656,
+              female: 210103,
+            },
+            {
+              age: "35 to 39",
+              male: 201979,
+              female: 200693,
+            },
+            {
+              age: "40 to 44",
+              male: 212114,
+              female: 212653,
+            },
+            {
+              age: "45 to 49",
+              male: 216446,
+              female: 219033,
+            },
+            {
+              age: "5 to 9",
+              male: 226901,
+              female: 214964,
+            },
+            {
+              age: "50 to 54",
+              male: 232241,
+              female: 237844,
+            },
+            {
+              age: "55 to 59",
+              male: 217033,
+              female: 228674,
+            },
+            {
+              age: "60 to 64",
+              male: 186412,
+              female: 197353,
+            },
+            {
+              age: "65 to 69",
+              male: 140336,
+              female: 156256,
+            },
+            {
+              age: "70 to 74",
+              male: 99402,
+              female: 116834,
+            },
+            {
+              age: "75 to 79",
+              male: 68758,
+              female: 88794,
+            },
+            {
+              age: "80 to 84",
+              male: 47628,
+              female: 72061,
+            },
+            {
+              age: "85 and Older",
+              male: 39372,
+              female: 83690,
+            },
+          ],
+          49: [
+            {
+              age: "0 to 5",
+              male: 102716,
+              female: 98004,
+            },
+            {
+              age: "10 to 14",
+              male: 102335,
+              female: 99132,
+            },
+            {
+              age: "15 to 17",
+              male: 60870,
+              female: 57957,
+            },
+            {
+              age: "18 to 21",
+              male: 90593,
+              female: 83299,
+            },
+            {
+              age: "22 to 24",
+              male: 66512,
+              female: 59368,
+            },
+            {
+              age: "25 to 29",
+              male: 99384,
+              female: 93840,
+            },
+            {
+              age: "30 to 34",
+              male: 98020,
+              female: 94075,
+            },
+            {
+              age: "35 to 39",
+              male: 87763,
+              female: 85422,
+            },
+            {
+              age: "40 to 44",
+              male: 87647,
+              female: 84970,
+            },
+            {
+              age: "45 to 49",
+              male: 89233,
+              female: 88877,
+            },
+            {
+              age: "5 to 9",
+              male: 103861,
+              female: 98642,
+            },
+            {
+              age: "50 to 54",
+              male: 98398,
+              female: 101197,
+            },
+            {
+              age: "55 to 59",
+              male: 95861,
+              female: 96152,
+            },
+            {
+              age: "60 to 64",
+              male: 79440,
+              female: 85124,
+            },
+            {
+              age: "65 to 69",
+              male: 60035,
+              female: 64369,
+            },
+            {
+              age: "70 to 74",
+              male: 42434,
+              female: 49221,
+            },
+            {
+              age: "75 to 79",
+              male: 30967,
+              female: 39425,
+            },
+            {
+              age: "80 to 84",
+              male: 23026,
+              female: 33863,
+            },
+            {
+              age: "85 and Older",
+              male: 20767,
+              female: 40188,
+            },
+          ],
+        };
+
+        function aggregateData(list) {
+          var maleTotal = 0;
+          var femaleTotal = 0;
+
+          for (var i = 0; i < list.length; i++) {
+            var row = list[i];
+            maleTotal += row.male;
+            femaleTotal += row.female;
+          }
+
+          for (var i = 0; i < list.length; i++) {
+            var row = list[i];
+            row.malePercent =
+              (-1 * Math.round((row.male / maleTotal) * 10000)) / 100;
+            row.femalePercent =
+              Math.round((row.female / femaleTotal) * 10000) / 100;
+          }
+
+          return list;
+        }
+
+        usData = aggregateData(usData);
+
+        // ===========================================================
+        // Root and wrapper container
+        // ===========================================================
+
+        // Create root and chart
+        var root = am5.Root.new("chartdiv4");
+
+        // Set themes
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Create wrapper container
+        var container = root.container.children.push(
+          am5.Container.new(root, {
+            layout: root.horizontalLayout,
+            width: am5.p100,
+            height: am5.p100,
+          })
+        );
+
+        // Set up formats
+        root.numberFormatter.setAll({
+          numberFormat: "#.##as",
+        });
+
+        // ===========================================================
+        // XY chart
+        // ===========================================================
+
+        // Create chart
+        var chart = container.children.push(
+          am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+            wheelX: "none",
+            wheelY: "none",
+            layout: root.verticalLayout,
+            width: am5.percent(60),
+          })
+        );
+
+        // Create axes
+        var yAxis1 = chart.yAxes.push(
+          am5xy.CategoryAxis.new(root, {
+            categoryField: "age",
+            renderer: am5xy.AxisRendererY.new(root, {}),
+          })
+        );
+        yAxis1.get("renderer").labels.template.set("fontSize", 12);
+        yAxis1.data.setAll(usData);
+
+        var yAxis2 = chart.yAxes.push(
+          am5xy.CategoryAxis.new(root, {
+            categoryField: "age",
+            renderer: am5xy.AxisRendererY.new(root, {
+              opposite: true,
+            }),
+          })
+        );
+        yAxis2.get("renderer").labels.template.set("fontSize", 12);
+        yAxis2.data.setAll(usData);
+
+        var xAxis = chart.xAxes.push(
+          am5xy.ValueAxis.new(root, {
+            min: -10,
+            max: 10,
+            numberFormat: "#.s'%'",
+            renderer: am5xy.AxisRendererX.new(root, {
+              minGridDistance: 40,
+            }),
+          })
+        );
+
+        // Create series
+        var maleSeries = chart.series.push(
+          am5xy.ColumnSeries.new(root, {
+            name: "Males",
+            xAxis: xAxis,
+            yAxis: yAxis1,
+            valueXField: "malePercent",
+            categoryYField: "age",
+            clustered: false,
+          })
+        );
+
+        maleSeries.columns.template.setAll({
+          tooltipText:
+            "Males, age {categoryY}: {male} ({malePercent.formatNumber('#.0s')}%)",
+          tooltipX: am5.p100,
+        });
+
+        maleSeries.data.setAll(usData);
+
+        var femaleSeries = chart.series.push(
+          am5xy.ColumnSeries.new(root, {
+            name: "Males",
+            xAxis: xAxis,
+            yAxis: yAxis1,
+            valueXField: "femalePercent",
+            categoryYField: "age",
+            clustered: false,
+          })
+        );
+
+        femaleSeries.columns.template.setAll({
+          tooltipText:
+            "Males, age {categoryY}: {female} ({femalePercent.formatNumber('#.0s')}%)",
+          tooltipX: am5.p100,
+        });
+
+        femaleSeries.data.setAll(usData);
+
+        // Add labels
+        var maleLabel = chart.plotContainer.children.push(
+          am5.Label.new(root, {
+            text: "Males",
+            fontSize: 20,
+            y: 5,
+            x: 5,
+            //centerX: am5.p50,
+            fill: maleSeries.get("fill"),
+            background: am5.RoundedRectangle.new(root, {
+              fill: am5.color(0xffffff),
+              fillOpacity: 0.5,
+            }),
+          })
+        );
+
+        var femaleLabel = chart.plotContainer.children.push(
+          am5.Label.new(root, {
+            text: "Females",
+            fontSize: 20,
+            y: 5,
+            x: am5.p100,
+            centerX: am5.p100,
+            dx: -5,
+            fill: femaleSeries.get("fill"),
+            background: am5.RoundedRectangle.new(root, {
+              fill: am5.color(0xffffff),
+              fillOpacity: 0.5,
+            }),
+          })
+        );
+
+        // ===========================================================
+        // Map chart
+        // ===========================================================
+
+        // Create chart
+        var map = container.children.push(
+          am5map.MapChart.new(root, {
+            panX: "none",
+            panY: "none",
+            wheelY: "none",
+            projection: am5map.geoMercator(),
+            width: am5.percent(40),
+          })
+        );
+
+        chart.getTooltip().set("autoTextColor", false);
+
+        // Title
+        var title = map.children.push(
+          am5.Label.new(root, {
+            text: "United States",
+            fontSize: 20,
+            y: 20,
+            x: am5.p50,
+            centerX: am5.p50,
+            background: am5.Rectangle.new(root, {
+              fill: am5.color(0xffffff),
+              fillOpacity: 0.5,
+            }),
+          })
+        );
+
+        // Create polygon series
+        var polygonSeries = map.series.push(
+          am5map.MapPolygonSeries.new(root, {
+            fill: am5.color(0x999999),
+            geoJSON: am5geodata_southKoreaHigh,
+          })
+        );
+
+        polygonSeries.mapPolygons.template.setAll({
+          tooltipText: "{name}",
+          interactive: true,
+        });
+
+        polygonSeries.mapPolygons.template.states.create("hover", {
+          fill: chart.get("colors").getIndex(2),
+        });
+
+        polygonSeries.mapPolygons.template.states.create("active", {
+          fill: chart.get("colors").getIndex(3),
+        });
+
+        var activePolygon;
+        polygonSeries.mapPolygons.template.events.on("click", function (ev) {
+          if (activePolygon) {
+            activePolygon.set("active", false);
+          }
+          activePolygon = ev.target;
+          activePolygon.set("active", true);
+          var state = ev.target.dataItem.dataContext.id.split("-").pop();
+
+          console.log(state);
+          console.log(stateData[state]);
+          var data = aggregateData(stateData[state]);
+
+          for (var i = 0; i < data.length; i++) {
+            maleSeries.data.setIndex(i, data[i]);
+            femaleSeries.data.setIndex(i, data[i]);
+          }
+
+          title.set("text", ev.target.dataItem.dataContext.name);
+        });
+      }); // end am5.ready()
+    </script>
+    <script>
+      am5.ready(function () {
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("chartdiv5");
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Add series
+        // https://www.amcharts.com/docs/v5/charts/word-cloud/
+        var series = root.container.children.push(
+          am5wc.WordCloud.new(root, {
+            categoryField: "tag",
+            valueField: "weight",
+            maxFontSize: am5.percent(15),
+          })
+        );
+
+        // Configure labels
+        series.labels.template.setAll({
+          fontFamily: "Courier New",
+        });
+
+        setInterval(function () {
+          am5.array.each(series.dataItems, function (dataItem) {
+            var value = Math.random() * 65;
+            value = value - Math.random() * value;
+            dataItem.set("value", value);
+            dataItem.set("valueWorking", value);
+          });
+        }, 5000);
+
+        // Data from:
+        // https://insights.stackoverflow.com/survey/2021#section-most-popular-technologies-programming-scripting-and-markup-languages
+        series.data.setAll([
+          { tag: "JavaScript", weight: 64.96 },
+          { tag: "HTML/CSS", weight: 56.07 },
+          { tag: "Python", weight: 48.24 },
+          { tag: "SQL", weight: 47.08 },
+          { tag: "Java", weight: 35.35 },
+          { tag: "Node.js", weight: 33.91 },
+          { tag: "TypeScript", weight: 30.19 },
+          { tag: "C#", weight: 27.86 },
+          { tag: "Bash/Shell", weight: 27.13 },
+          { tag: "C++", weight: 24.31 },
+          { tag: "PHP", weight: 21.98 },
+          { tag: "C", weight: 21.01 },
+          { tag: "PowerShell", weight: 10.75 },
+          { tag: "Go", weight: 9.55 },
+          { tag: "Kotlin", weight: 8.32 },
+          { tag: "Rust", weight: 7.03 },
+          { tag: "Ruby", weight: 6.75 },
+          { tag: "Dart", weight: 6.02 },
+          { tag: "Assembly", weight: 5.61 },
+          { tag: "Swift", weight: 5.1 },
+          { tag: "R", weight: 5.07 },
+          { tag: "VBA", weight: 4.66 },
+          { tag: "Matlab", weight: 4.66 },
+          { tag: "Groovy", weight: 3.01 },
+          { tag: "Objective-C", weight: 2.8 },
+          { tag: "Scala", weight: 2.6 },
+          { tag: "Perl", weight: 2.46 },
+          { tag: "Haskell", weight: 2.12 },
+          { tag: "Delphi", weight: 2.1 },
+          { tag: "Clojure", weight: 1.88 },
+          { tag: "Elixir", weight: 1.74 },
+          { tag: "LISP", weight: 1.33 },
+          { tag: "Julia", weight: 1.29 },
+          { tag: "F#", weight: 0.97 },
+          { tag: "Erlang", weight: 0.79 },
+          { tag: "APL", weight: 0.65 },
+          { tag: "Crystal", weight: 0.56 },
+          { tag: "COBOL", weight: 0.53 },
+        ]);
+      }); // end am5.ready()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>chartist</title>
+    <link rel="stylesheet" type="text/css" href="./css/chartist.css" />
+  </head>
+  <body>
+    <div class="ct-chart" style="margin-top: 100px"></div>
+    <div class="ct-chart2" style="margin-top: 100px"></div>
+    <div class="ct-chart3" style="margin-top: 100px"></div>
+    <div class="ct-chart4" style="margin-top: 100px"></div>
+    <div class="ct-chart5" style="margin-top: 100px"></div>
+    <div class="ct-chart6" style="margin-top: 100px"></div>
+    <div class="ct-chart7" style="margin-top: 100px"></div>
+    <div
+      class="ct-chart8"
+      style="margin-top: 100px; margin-bottom: 100px"
+    ></div>
+
+    <script src="./util/chartist.min.js"></script>
+    <script src="./util/chartist-plugin-pointlabels.min.js"></script>
+    <script>
+      new Chartist.Line(
+        ".ct-chart",
+        {
+          labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          series: [
+            [12, 9, 7, 8, 5],
+            [2, 1, 3.5, 7, 3],
+            [1, 3, 4, 5, 6],
+          ],
+        },
+        {
+          fullWidth: true,
+          chartPadding: {
+            right: 40,
+          },
+        }
+      );
+
+      var times = function (n) {
+        return Array.apply(null, new Array(n));
+      };
+
+      var data = times(52)
+        .map(Math.random)
+        .reduce(
+          function (data, rnd, index) {
+            data.labels.push(index + 1);
+            data.series.forEach(function (series) {
+              series.push(Math.random() * 100);
+            });
+
+            return data;
+          },
+          {
+            labels: [],
+            series: times(4).map(function () {
+              return new Array();
+            }),
+          }
+        );
+
+      var options = {
+        showLine: false,
+        axisX: {
+          labelInterpolationFnc: function (value, index) {
+            return index % 13 === 0 ? "W" + value : null;
+          },
+        },
+      };
+
+      var responsiveOptions = [
+        [
+          "screen and (min-width: 640px)",
+          {
+            axisX: {
+              labelInterpolationFnc: function (value, index) {
+                return index % 4 === 0 ? "W" + value : null;
+              },
+            },
+          },
+        ],
+      ];
+
+      new Chartist.Line(".ct-chart2", data, options, responsiveOptions);
+
+      var chart = new Chartist.Line(
+        ".ct-chart3",
+        {
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          series: [
+            [1, 5, 2, 5, 4, 3],
+            [2, 3, 4, 8, 1, 2],
+            [5, 4, 3, 2, 1, 0.5],
+          ],
+        },
+        {
+          low: 0,
+          showArea: true,
+          showPoint: false,
+          fullWidth: true,
+        }
+      );
+
+      chart.on("draw", function (data) {
+        if (data.type === "line" || data.type === "area") {
+          data.element.animate({
+            d: {
+              begin: 2000 * data.index,
+              dur: 2000,
+              from: data.path
+                .clone()
+                .scale(1, 0)
+                .translate(0, data.chartRect.height())
+                .stringify(),
+              to: data.path.clone().stringify(),
+              easing: Chartist.Svg.Easing.easeOutQuint,
+            },
+          });
+        }
+      });
+
+      var chart = new Chartist.Pie(
+        ".ct-chart4",
+        {
+          series: [10, 20, 50, 20, 5, 50, 15],
+          labels: [1, 2, 3, 4, 5, 6, 7],
+        },
+        {
+          donut: true,
+          showLabel: false,
+        }
+      );
+
+      chart.on("draw", function (data) {
+        if (data.type === "slice") {
+          // Get the total path length in order to use for dash array animation
+          var pathLength = data.element._node.getTotalLength();
+
+          // Set a dasharray that matches the path length as prerequisite to animate dashoffset
+          data.element.attr({
+            "stroke-dasharray": pathLength + "px " + pathLength + "px",
+          });
+
+          // Create animation definition while also assigning an ID to the animation for later sync usage
+          var animationDefinition = {
+            "stroke-dashoffset": {
+              id: "anim" + data.index,
+              dur: 1000,
+              from: -pathLength + "px",
+              to: "0px",
+              easing: Chartist.Svg.Easing.easeOutQuint,
+              // We need to use `fill: 'freeze'` otherwise our animation will fall back to initial (not visible)
+              fill: "freeze",
+            },
+          };
+
+          // If this was not the first slice, we need to time the animation so that it uses the end sync event of the previous animation
+          if (data.index !== 0) {
+            animationDefinition["stroke-dashoffset"].begin =
+              "anim" + (data.index - 1) + ".end";
+          }
+
+          // We need to set an initial value before the animation starts as we are not in guided mode which would do that for us
+          data.element.attr({
+            "stroke-dashoffset": -pathLength + "px",
+          });
+
+          // We can't use guided mode as the animations need to rely on setting begin manually
+          // See http://gionkunz.github.io/chartist-js/api-documentation.html#chartistsvg-function-animate
+          data.element.animate(animationDefinition, false);
+        }
+      });
+
+      var chart = new Chartist.Line(
+        ".ct-chart5",
+        {
+          labels: [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+          ],
+          series: [
+            [12, 9, 7, 8, 5, 4, 6, 2, 3, 3, 4, 6],
+            [4, 5, 3, 7, 3, 5, 5, 3, 4, 4, 5, 5],
+            [5, 3, 4, 5, 6, 3, 3, 4, 5, 6, 3, 4],
+            [3, 4, 5, 6, 7, 6, 4, 5, 6, 7, 6, 3],
+          ],
+        },
+        {
+          low: 0,
+        }
+      );
+
+      // Let's put a sequence number aside so we can use it in the event callbacks
+      var seq = 0,
+        delays = 80,
+        durations = 500;
+
+      // Once the chart is fully created we reset the sequence
+      chart.on("created", function () {
+        seq = 0;
+      });
+
+      // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+      chart.on("draw", function (data) {
+        seq++;
+
+        if (data.type === "line") {
+          // If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
+          data.element.animate({
+            opacity: {
+              // The delay when we like to start the animation
+              begin: seq * delays + 1000,
+              // Duration of the animation
+              dur: durations,
+              // The value where the animation should start
+              from: 0,
+              // The value where it should end
+              to: 1,
+            },
+          });
+        } else if (data.type === "label" && data.axis === "x") {
+          data.element.animate({
+            y: {
+              begin: seq * delays,
+              dur: durations,
+              from: data.y + 100,
+              to: data.y,
+              // We can specify an easing function from Chartist.Svg.Easing
+              easing: "easeOutQuart",
+            },
+          });
+        } else if (data.type === "label" && data.axis === "y") {
+          data.element.animate({
+            x: {
+              begin: seq * delays,
+              dur: durations,
+              from: data.x - 100,
+              to: data.x,
+              easing: "easeOutQuart",
+            },
+          });
+        } else if (data.type === "point") {
+          data.element.animate({
+            x1: {
+              begin: seq * delays,
+              dur: durations,
+              from: data.x - 10,
+              to: data.x,
+              easing: "easeOutQuart",
+            },
+            x2: {
+              begin: seq * delays,
+              dur: durations,
+              from: data.x - 10,
+              to: data.x,
+              easing: "easeOutQuart",
+            },
+            opacity: {
+              begin: seq * delays,
+              dur: durations,
+              from: 0,
+              to: 1,
+              easing: "easeOutQuart",
+            },
+          });
+        } else if (data.type === "grid") {
+          // Using data.axis we get x or y which we can use to construct our animation definition objects
+          var pos1Animation = {
+            begin: seq * delays,
+            dur: durations,
+            from: data[data.axis.units.pos + "1"] - 30,
+            to: data[data.axis.units.pos + "1"],
+            easing: "easeOutQuart",
+          };
+
+          var pos2Animation = {
+            begin: seq * delays,
+            dur: durations,
+            from: data[data.axis.units.pos + "2"] - 100,
+            to: data[data.axis.units.pos + "2"],
+            easing: "easeOutQuart",
+          };
+
+          var animations = {};
+          animations[data.axis.units.pos + "1"] = pos1Animation;
+          animations[data.axis.units.pos + "2"] = pos2Animation;
+          animations["opacity"] = {
+            begin: seq * delays,
+            dur: durations,
+            from: 0,
+            to: 1,
+            easing: "easeOutQuart",
+          };
+
+          data.element.animate(animations);
+        }
+      });
+
+      var chart = new Chartist.Line(
+        ".ct-chart6",
+        {
+          labels: [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+          ],
+          series: [
+            [12, 4, 2, 8, 5, 4, 6, 2, 3, 3, 4, 6],
+            [4, 8, 9, 3, 7, 2, 10, 5, 8, 1, 7, 10],
+          ],
+        },
+        {
+          low: 0,
+          showLine: false,
+          axisX: {
+            showLabel: false,
+            offset: 0,
+          },
+          axisY: {
+            showLabel: false,
+            offset: 0,
+          },
+        }
+      );
+
+      // Let's put a sequence number aside so we can use it in the event callbacks
+      var seq = 0;
+
+      // Once the chart is fully created we reset the sequence
+      chart.on("created", function () {
+        seq = 0;
+      });
+
+      // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+      chart.on("draw", function (data) {
+        if (data.type === "point") {
+          // If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
+          data.element.animate({
+            opacity: {
+              // The delay when we like to start the animation
+              begin: seq++ * 80,
+              // Duration of the animation
+              dur: 500,
+              // The value where the animation should start
+              from: 0,
+              // The value where it should end
+              to: 1,
+            },
+            x1: {
+              begin: seq++ * 80,
+              dur: 500,
+              from: data.x - 100,
+              to: data.x,
+              // You can specify an easing function name or use easing functions from Chartist.Svg.Easing directly
+              easing: Chartist.Svg.Easing.easeOutQuart,
+            },
+          });
+        }
+      });
+
+      //   new Chartist.Line(
+      //     ".ct-chart7",
+      //     {
+      //       labels: [
+      //         "Jan",
+      //         "Feb",
+      //         "Mar",
+      //         "Apr",
+      //         "Mai",
+      //         "Jun",
+      //         "Jul",
+      //         "Aug",
+      //         "Sep",
+      //         "Oct",
+      //         "Nov",
+      //         "Dec",
+      //       ],
+      //       series: [[5, -4, 3, 7, 20, 10, 3, 4, 8, -10, 6, -8]],
+      //     },
+      //     {
+      //       showArea: true,
+      //       axisY: {
+      //         onlyInteger: true,
+      //       },
+      //       plugins: [
+      //         Chartist.plugins.ctThreshold({
+      //           threshold: 4,
+      //         }),
+      //       ],
+      //     }
+      //   );
+
+      var chart = new Chartist.Line(
+        ".ct-chart8",
+        {
+          labels: [1, 2, 3, 4, 5, 6, 7],
+          series: [
+            [1, 5, 3, 4, 6, 2, 3],
+            [2, 4, 2, 5, 4, 3, 6],
+          ],
+        },
+        {
+          plugins: [
+            ctPointLabels({
+              textAnchor: "middle",
+            }),
+          ],
+        }
+      );
+    </script>
+  </body>
+</html>

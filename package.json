@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "chartist-plugin-pointlabels": "^0.0.6"
+  }
+}
